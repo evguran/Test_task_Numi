@@ -6,14 +6,15 @@ import random
 
 class The_Branch:
     # Stores a branch data
-    def __init__(self, bm, root_num, id):
+    def __init__(self, bm, root_num, id, root_loop):
         self.verts = [ v.index for v in bm.verts if v.select ]
         self.faces = [ f.index for f in bm.faces if f.select ]
         self.root_num = root_num
         self.id = id
+        self.root_loop = root_loop
     def __str__(self):
         return "I am a branch"
-
+            
 
 def deselect_all(bm):
     # Deselect all
@@ -60,7 +61,7 @@ def rec(root_loop, bm, e_list_groups, root_num, branch_list):
     print("Total faces selected", bpy.context.object.data.total_face_sel)
     # ======================================================================
     # Adding the found items to the object
-    branch = The_Branch(bm, root_num, len(branch_list)+1)
+    branch = The_Branch(bm, root_num, len(branch_list)+1, root_loop)
     branch_list.append(branch)
     
     # ======================================================================
@@ -94,7 +95,7 @@ def rec(root_loop, bm, e_list_groups, root_num, branch_list):
     root_num += 1
     print("e_list_groups length is {:}".format(len(e_list_groups)))
 #    print(bvhtree)
-    for e_loop in list(e_list_groups):
+    for e_loop in list(e_list_groups): # !!!
         idx = e_loop[0]
         # print(idx)
         bvh_co = mw @ bm.edges[idx].verts[0].co
@@ -103,13 +104,10 @@ def rec(root_loop, bm, e_list_groups, root_num, branch_list):
             e_list_groups.remove(e_loop)
 #            print("e_list_groups length is {:}".format(len(e_list_groups)))
             if e_list_groups:
-#                pass
                 rec(e_loop, bm, e_list_groups, root_num, branch_list)
                 print("After return length is {:}".format(len(e_list_groups)))
             else:
-#                pass
                 print("Groups is empty")
-#                return 1
         else:
             print(f"BVHTree - {bvhtree}")
             print("--------------------")
@@ -203,7 +201,7 @@ if __name__ == "__main__":
     bm.free()
     bpy.ops.object.mode_set(mode='OBJECT')
     obj = bpy.context.object
-#    
+    
     # ======================================================================
     # Coloring vertices
     branch_num = 0
@@ -214,7 +212,7 @@ if __name__ == "__main__":
     for i in range(branch_num + 1):
         print(i)
         verts_ids = []
-        r, g, b = random.randint(0,255),random.randint(0,255),random.randint(0,255)
+#        r, g, b = random.randint(0,255),random.randint(0,255),random.randint(0,255)
         
         colattr = obj.data.color_attributes.get(str(i))
         if colattr is None:
@@ -231,34 +229,23 @@ if __name__ == "__main__":
         for v_index in range(len(obj.data.vertices)):
             if v_index in verts_ids:
 #                colattr.data[v_index].color = [r / 255, g / 255, b / 255, 1]
-                colattr.data[v_index].color = [125. / 255, 125. / 255, 0. / 255, 1]
+                colattr.data[v_index].color = [255. / 255, 165. / 255, 0. / 255, 1]
             else:
                 colattr.data[v_index].color = [1, 1, 1, 1]
     
     # ======================================================================
     # Report status
-#    for branch in branch_list:
-#        id = branch.id
-#        root_num = branch.root_num
-#        verts_ids = branch.verts
-#        faces_ids = branch.faces
-#        
-#        print
-#        print(f"id = {id}")
-#        print(f"root_num = {root_num}")
-#        print(f"Number of vertices: {len(verts_ids)}")
-#        print(f"Number of polygons: {len(faces_ids)}")
-#        print
+    for branch in branch_list:
+        id = branch.id
+        root_num = branch.root_num
+        verts_ids = branch.verts
+        faces_ids = branch.faces
+        
+        print
+        print(f"id = {id}")
+        print(f"root_num = {root_num}")
+        print(f"Number of vertices: {len(verts_ids)}")
+        print(f"Number of polygons: {len(faces_ids)}")
+        print
 
-#    
     print("done")
-#    print(len(branch_list))
-
-#test
-
-#lst = [ v for v in range(10)]
-#print(lst)
-#for i in lst:
-#    if i == 5: lst.remove(5)
-#    print(i, len(lst))
-#    
