@@ -116,7 +116,7 @@ def rec(root_loop, bm, e_list_groups, root_num, branch_list):
 
 # ==========================================================================
 
-if __name__ == "__main__":
+def main():
     # ======================================================================
     # Initiation
     print()
@@ -249,3 +249,7 @@ if __name__ == "__main__":
         print
 
     print("done")
+
+if __name__ == "__main__":
+    main()
+
